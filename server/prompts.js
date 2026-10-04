@@ -24,7 +24,9 @@ Return JSON only: {"workMap":{"task":"…","steps":[…same shape as draft…],"
 - For every guardrail expressible over a single invoice, add
   "check":{"when":[Cond,…],"require":Cond}
   Cond = {"field":"amount|category|supplier|entity|cost_center|asset_no|month|action","op":">|<|==|!=|in|empty|not_empty","value":…}
-  Fields: amount in EUR (number); category: equipment|supplies|parts|services; cost_center: "4711" opex general, "0400" capex equipment, "4720" opex services; asset_no string; month 1-12; supplier and entity as shown on the invoice; action: approve|hold|escalate.
+  Fields: amount in EUR (number); category: equipment|supplies|parts|services; cost_center: "4711" opex general, "0400" capex equipment, "4720" opex services; asset_no string; month 1-12; action: approve|hold|escalate.
+  Exact allowed strings. supplier: "Kessler Maschinen GmbH", "Brandt Office Supplies", "Strojírny Plzeň s.r.o."; entity: "DE · Stuttgart", "CZ · Plzeň (subsidiary)". Use these strings exactly.
+  When the expert's rule is about a specific supplier or entity, always scope the check with a supplier or entity condition in "when". Never write a check with only month or only action conditions. Prefer "in" with the exact strings for entity rules.
   A violation is: all "when" true and "require" false.
   Example "equipment over €5,000 is always capex":
   {"when":[{"field":"amount","op":">","value":5000},{"field":"category","op":"==","value":"equipment"},{"field":"action","op":"==","value":"approve"}],"require":{"field":"cost_center","op":"==","value":"0400"}}

@@ -15,7 +15,7 @@ beforeEach(async () => {
   const ai = {
     describeFrameChange: async () => ({ events: [{ kind: 'field_change', invoice: 'INV-4471', field: 'cost_center', from: '4711', to: '0400', note: 'ref DE89 3704 0044 0532 0130 00' }] }),
     synthesize: async args => { calls.synth = args; return { workMap: { task: 'AP', steps: [{ n: 1, t: 1, title: 'Code', decision: 'capex' }], guardrails: [] }, openQuestions: ['Why?'] } },
-    finalize: async args => { calls.final = args; return { workMap: { task: 'AP', steps: [{ n: 1, t: 1, title: 'Code', decision: 'capex', reason: { quote: 'over 5k', source: 'live', t: 2 } }], guardrails: [{ id: 'g1', stepN: 1, rule: 'r', kind: 'limit', quote: 'q', t: 2 }] } } },
+    finalize: async args => { calls.final = args; return { workMap: { task: 'AP', steps: [{ n: 1, t: 1, title: 'Code', decision: 'capex', reason: { quote: 'over 5k', source: 'live', t: 2 } }, { n: 2, t: 2, title: 'Check', decision: 'ok', reason: { quote: 'invented line', source: 'live', t: 2 } }], guardrails: [{ id: 'g1', stepN: 1, rule: 'r', kind: 'limit', quote: 'always capex', t: 2 }, { id: 'g2', stepN: 1, rule: 'r2', kind: 'limit', quote: 'never said', t: 2 }] } } },
   }
   app = createApp({ store: createStore(root), ai, eleven: { apiKey: 'k', agents: { interviewer: 'agent_i', tutor: 'agent_t' }, fetch: async url => ({ ok: true, json: async () => ({ signed_url: `wss://x?u=${encodeURIComponent(url)}` }) }) } })
 })
@@ -46,12 +46,26 @@ describe('api', () => {
     expect(res.body.openQuestions).toEqual(['Why?'])
     expect(calls.synth.transcript.map(u => u.text)).toEqual(['keep'])
   })
+  it('keeps events inside off-record ranges away from synthesis', async () => {
+    const s = await session()
+    await request(app).post(`/api/sessions/${s.id}/frame`).send({ t: 3.2, prev: null, curr: JPEG })
+    await request(app).post(`/api/sessions/${s.id}/frame`).send({ t: 9, prev: null, curr: JPEG })
+    await request(app).post(`/api/sessions/${s.id}/offrecord`).send({ t0: 3, t1: 4 })
+    await request(app).post(`/api/sessions/${s.id}/synthesize`)
+    expect(calls.synth.events.map(e => e.t)).toEqual([9])
+  })
   it('finalizes into the latest work map with frames and expert', async () => {
     const s = await session()
     await request(app).post(`/api/sessions/${s.id}/frame`).send({ t: 0.5, prev: null, curr: JPEG })
+    await request(app).post(`/api/sessions/${s.id}/transcript`).send({ utterances: [{ t: 1, speaker: 'expert', text: 'Anything over 5k is capex.' }] })
     await request(app).post(`/api/sessions/${s.id}/synthesize`)
-    const res = await request(app).post(`/api/sessions/${s.id}/finalize`).send({ debrief: [{ t: 1, speaker: 'expert', text: 'yes' }] })
+    const res = await request(app).post(`/api/sessions/${s.id}/finalize`).send({ debrief: [{ t: 1, speaker: 'expert', text: 'Yes, always capex. Mail me at max@example.com' }] })
     expect(res.body).toMatchObject({ expert: 'Sabine', sessionId: s.id })
+    expect(res.body.steps[0].reason.quote).toBe('over 5k')
+    expect(res.body.steps[1].reason.quote).toBe('')
+    expect(res.body.guardrails.map(g => g.quote)).toEqual(['always capex', ''])
+    expect(calls.final.debrief[0].text).not.toContain('max@example.com')
+    expect((await request(app).get(`/api/sessions/${s.id}`)).body.debrief[0].text).not.toContain('max@example.com')
     expect(res.body.steps[0].frame).toMatch(/^f\d+\.jpg$/)
     expect(res.body.guardrails[0].frame).toBe(res.body.steps[0].frame)
     expect((await request(app).get('/api/workmaps/latest')).body.id).toBe(res.body.id)

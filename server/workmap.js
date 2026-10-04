@@ -23,3 +23,22 @@ export function validateWorkMap(wm) {
 }
 
 export const inRanges = (t, ranges) => ranges.some(([a, b]) => t >= a && t <= b)
+
+const norm = s => String(s ?? '').toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim()
+
+// Blank any quote that the expert did not actually say (verbatim, ignoring case/punctuation/whitespace).
+// live/debrief: arrays of expert utterance texts; omit one to skip that source.
+export function verifyQuotes(workMap, { live, debrief }) {
+  const hay = { live: live && ` ${norm(live.join(' '))} `, debrief: debrief && ` ${norm(debrief.join(' '))} ` }
+  const ok = (quote, source) => {
+    if (!quote) return true
+    const q = ` ${norm(quote)} `
+    const srcs = source === 'live' || source === 'debrief' ? [source] : ['live', 'debrief']
+    return srcs.some(k => hay[k] && hay[k].includes(q))
+  }
+  return {
+    ...workMap,
+    steps: workMap.steps.map(s => (s.reason ? { ...s, reason: { ...s.reason, quote: ok(s.reason.quote, s.reason.source) ? s.reason.quote : '' } } : s)),
+    guardrails: workMap.guardrails.map(g => ({ ...g, quote: ok(g.quote) ? g.quote : '' })),
+  }
+}

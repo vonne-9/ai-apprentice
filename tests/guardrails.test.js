@@ -44,4 +44,13 @@ describe('guardrails', () => {
     const badTypes = { id: 'b3', stepN: 1, rule: 'z', kind: 'limit', check: { when: 'amount', require: 'x' } }
     expect(checkGuardrails(press, 'approve', [noRequire, noWhen, badTypes, capex]).map(g => g.id)).toEqual(['g1'])
   })
+  it('compares strings loosely: case, whitespace and cost-center zero padding', () => {
+    const rule = { when: [{ field: 'category', op: '==', value: 'equipment' }], require: { field: 'cost_center', op: '==', value: 400 } }
+    const g = { id: 'n1', stepN: 1, rule: 'x', kind: 'limit', check: rule }
+    expect(checkGuardrails({ ...press, costCenter: '0400' }, 'approve', [g])).toEqual([])
+    expect(checkGuardrails(press, 'approve', [g]).map(x => x.id)).toEqual(['n1'])
+    expect(evalCond({ ...press, category: 'Equipment ' }, 'approve', { field: 'category', op: '==', value: 'equipment' })).toBe(true)
+    expect(evalCond({ ...press, category: 'Equipment ' }, 'approve', { field: 'category', op: 'in', value: ['equipment'] })).toBe(true)
+    expect(evalCond({ ...press, costCenter: '0400' }, 'approve', { field: 'cost_center', op: '!=', value: 400 })).toBe(false)
+  })
 })

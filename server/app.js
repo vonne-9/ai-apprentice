@@ -1,8 +1,13 @@
 import express from 'express'
 import { redactDeep } from './pii.js'
-import { attachFrames, validateWorkMap, inRanges } from './workmap.js'
+import { attachFrames, validateWorkMap, inRanges, verifyQuotes } from './workmap.js'
 
-const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))])
+const withTimeout = async (p, ms) => {
+  let timer
+  try { return await Promise.race([p, new Promise((_, rej) => { timer = setTimeout(() => rej(new Error('timeout')), ms) })]) }
+  finally { clearTimeout(timer) }
+}
+const expertLines = list => list.filter(u => u.speaker === 'expert').map(u => u.text)
 
 export function createApp({ store, ai, eleven }) {
   const app = express()
@@ -21,7 +26,7 @@ export function createApp({ store, ai, eleven }) {
     const { events: recent } = await store.read(id)
     let events = []
     try {
-      const out = await withTimeout(ai.describeFrameChange({ prevB64: prev, currB64: curr, recentEvents: recent }), 8000)
+      const out = await withTimeout(ai.describeFrameChange({ prevB64: prev, currB64: curr, recentEvents: recent }), 15000)
       events = redactDeep(out.events || []).map(e => ({ ...e, t, frame }))
     } catch (e) {
       console.warn('frame dropped:', e.message)
@@ -44,9 +49,11 @@ export function createApp({ store, ai, eleven }) {
   app.post('/api/sessions/:id/synthesize', async (req, res) => {
     const s = await store.read(req.params.id)
     const transcript = s.transcript.filter(u => !u.offRecord && !inRanges(u.t, s.offRecord))
-    const out = await ai.synthesize({ events: s.events, transcript })
+    const events = s.events.filter(e => !inRanges(e.t, s.offRecord))
+    const out = await ai.synthesize({ events, transcript })
     const errs = validateWorkMap(out?.workMap)
     if (errs.length) return res.status(502).json({ error: errs.join('; ') })
+    out.workMap = verifyQuotes(out.workMap, { live: expertLines(transcript) })
     await store.update(s.id, x => { x.draft = out })
     res.json(out)
   })
@@ -54,10 +61,14 @@ export function createApp({ store, ai, eleven }) {
   app.post('/api/sessions/:id/finalize', async (req, res) => {
     const s = await store.read(req.params.id)
     if (!s.draft) return res.status(409).json({ error: 'synthesize first' })
-    const out = await ai.finalize({ draft: s.draft.workMap, debrief: req.body.debrief || [] })
+    const debrief = redactDeep(req.body.debrief || [])
+    await store.update(s.id, x => { x.debrief = debrief })
+    const out = await ai.finalize({ draft: s.draft.workMap, debrief })
     const errs = validateWorkMap(out?.workMap)
     if (errs.length) return res.status(502).json({ error: errs.join('; ') })
-    const wm = attachFrames({ ...out.workMap, id: `wm-${s.id}`, sessionId: s.id, expert: s.expert, confirmedAt: Date.now() }, s.frames)
+    const live = expertLines(s.transcript.filter(u => !u.offRecord && !inRanges(u.t, s.offRecord)))
+    const verified = verifyQuotes(out.workMap, { live, debrief: expertLines(debrief) })
+    const wm = attachFrames({ ...verified, id: `wm-${s.id}`, sessionId: s.id, expert: s.expert, confirmedAt: Date.now() }, s.frames)
     await store.saveWorkMap(wm)
     res.json(wm)
   })

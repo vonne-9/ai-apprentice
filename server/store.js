@@ -2,6 +2,13 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import crypto from 'node:crypto'
 
+// Write to a temp file then rename so concurrent readers never see a truncated file.
+async function atomicWrite(target, data) {
+  const tmp = `${target}.tmp`
+  await fs.writeFile(tmp, data)
+  await fs.rename(tmp, target)
+}
+
 export function createStore(root) {
   const dir = id => path.join(root, 'sessions', id)
   const file = id => path.join(dir(id), 'session.json')
@@ -10,7 +17,7 @@ export function createStore(root) {
   async function read(id) { return JSON.parse(await fs.readFile(file(id), 'utf8')) }
   async function write(s) {
     await fs.mkdir(dir(s.id), { recursive: true })
-    await fs.writeFile(file(s.id), JSON.stringify(s, null, 2))
+    await atomicWrite(file(s.id), JSON.stringify(s, null, 2))
   }
   // Serialize read-modify-write so concurrent frame/transcript posts don't drop updates.
   function update(id, fn) {
@@ -36,7 +43,7 @@ export function createStore(root) {
     framePath: (id, name) => path.resolve(dir(id), name),
     async saveWorkMap(wm) {
       await fs.mkdir(root, { recursive: true })
-      await fs.writeFile(path.join(root, 'workmap-latest.json'), JSON.stringify(wm, null, 2))
+      await atomicWrite(path.join(root, 'workmap-latest.json'), JSON.stringify(wm, null, 2))
     },
     async latestWorkMap() {
       try { return JSON.parse(await fs.readFile(path.join(root, 'workmap-latest.json'), 'utf8')) } catch { return null }
