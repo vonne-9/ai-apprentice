@@ -24,7 +24,7 @@ Rough length: 6 to 7 minutes. Each beat is tagged with the Apprentice Test quest
 4. **Say:** "Anything over 5,000 that's a machine or equipment isn't an expense, it's capex. It goes to 0400 and needs an asset number, otherwise fixed assets bounces it."
 5. Click Approve.
 
-**Apprentice Test 1 (when to ask):** while you were changing the field and typing, the agent said nothing. Point at the pause badge on the capture page. It only spoke after the pause. The mechanism is the `[PAUSE]` signal from `pauseDetector.js`, `sendUserActivity()` on every ERP keystroke, and the agent's `skip_turn` tool for everything else. If you want to show it, type in the asset number field while it is mid-question and it stops.
+**Apprentice Test 1 (when to ask):** while you were changing the field and typing, the agent said nothing. Point at the "listening" indicator and the "N questions asked" count on the capture page: the count stays flat while you type, then goes up after the pause. The mechanism is the `[PAUSE]` signal from `pauseDetector.js`, `sendUserActivity()` on every ERP keystroke, and the agent's `skip_turn` tool for everything else. Optional, confirm in rehearsal before relying on it: type in the asset number field while it is mid-question and see whether it stops.
 
 **Apprentice Test 2 (what to ask):** the question was about the recode, a reason that isn't visible on screen. It did not ask "what is the supplier?" or "what is the amount?", which are already in the frame.
 
@@ -73,7 +73,7 @@ The save is held. The ERP shows "Held by tutor", and the tutor speaks the rule i
 
 Now fix it: change the cost center to 0400, enter an asset number, click Approve again. This time it saves.
 
-**Apprentice Test 4 (did the new hire learn):** INV-5120 is a case the expert never processed. The tutor stopped the wrong save before it was committed, and the correct one went through. Finish with the mastery screen: steps the learner got right are marked mastered, the capex step is listed under "practice next" because it needed the veto. The veto is a client-side check of the Work Map's guardrails against the save attempt (`checkGuardrails`), not a model judgement, so it triggers reliably.
+**Apprentice Test 4 (did the new hire learn):** INV-5120 is a case the expert never processed. The tutor stopped the wrong save before it was committed, and the correct one went through. Then click "Finish session"; the mastery screen only appears after that. Steps the learner got right are marked mastered, the capex step is listed under "Practice next" because it needed the veto. Steps the tutor never recorded an outcome for show "Not practiced yet". The veto is a client-side check of the Work Map's guardrails against the save attempt (`checkGuardrails`), not a model judgement, so it triggers reliably.
 
 ## Closing line
 
@@ -84,6 +84,6 @@ Optional, for the slide: each Work Map is versioned. When later sessions show st
 ## If something goes wrong
 
 - Agent talks over you during capture: check headphones first, then that the ERP window is the one being shared.
-- No question after a long pause: look at the capture page's event count. If it is not rising, the screen share is on the wrong window.
+- No question after a long pause: look at the "Screen events" feed on the capture page. If no new events appear, the screen share is on the wrong window.
 - Veto doesn't fire in Teach: the ERP must be opened with `?mode=teach`, otherwise saves go through without waiting for the tutor.
 - Vision calls are slow or failing: the server logs it and drops that frame. Capture continues, just with fewer events.

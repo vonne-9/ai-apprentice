@@ -19,7 +19,7 @@ The workflow is supplier invoice processing on a mock ERP that is part of this r
 └──────────────────────────────────────────┘
 ┌─ Tab B: /capture | /map | /teach ────────────────────────────────┐
 │ ScreenSampler: frame every 1.5s → pixel-diff gate                │
-│   → POST /api/frame (prev + curr JPEG) → Event[]                 │
+│   → POST /api/sessions/:id/frame (prev + curr JPEG) → Event[]    │
 │   → conversation.sendContextualUpdate("[EVENT] …")               │
 │ PauseDetector: no ERP input ≥4s AND no speech AND no new event   │
 │   → sendContextualUpdate("[PAUSE] …")                            │
@@ -30,6 +30,7 @@ The workflow is supplier invoice processing on a mock ERP that is part of this r
 │ POST /api/sessions                 create session                │
 │ POST /api/sessions/:id/frame       Claude vision → Event[]       │
 │ POST /api/sessions/:id/transcript  append utterances             │
+│ POST /api/sessions/:id/offrecord   mark off-the-record window    │
 │ POST /api/sessions/:id/synthesize  → draft WorkMap + openQuestions│
 │ POST /api/sessions/:id/finalize    → confirmed WorkMap           │
 │ GET  /api/workmaps/latest                                        │
@@ -37,7 +38,7 @@ The workflow is supplier invoice processing on a mock ERP that is part of this r
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-Note: the pause signal is actually sent with `sendUserMessage`, because contextual updates never trigger an agent reply. The diagram is copied from the design spec (`docs/superpowers/specs/2026-10-03-ai-apprentice-design.md`), which has the details.
+Note: the ERP has no separate Save button; Approve, Hold and Escalate are the saves. Also, the pause signal is actually sent with `sendUserMessage`, because contextual updates never trigger an agent reply. The diagram is copied from the design spec (`docs/superpowers/specs/2026-10-03-ai-apprentice-design.md`), which has the details.
 
 Stack: React 19 + Vite on the client, a small Express server that holds the API keys, `@elevenlabs/react` for the voice agents, Claude for vision and synthesis. Data is JSON files and JPEG frames under `server/data/` (no database).
 
