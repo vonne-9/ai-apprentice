@@ -21,31 +21,44 @@ const prev = (speaker, before) => [...lines].reverse().find(u => u.speaker === s
 // Each segment: [start, end, label]. Agent lines are timestamped when speech starts; user lines when
 // the transcript arrives (i.e. just after the person finished speaking).
 const segments = []
-const add = (a, b, label) => { if (b > a) segments.push([Math.max(0, a), b, label]) }
+const add = (a, b, label) => {
+  const prevEnd = segments.length ? segments[segments.length - 1][1] : 0
+  const start = Math.max(0, a, prevEnd) // never repeat footage
+  if (b - start > 0.5) segments.push([start, b, label])
+}
+// Approximate speech windows from word counts (~2.6 words/s) so thinking gaps between turns are dropped.
+const words = u => u.text.split(/\s+/).filter(Boolean).length
+const agentSpan = u => [u.t - 0.4, u.t + words(u) / 2.6 + 0.6]
+const userSpan = u => [u.t - words(u) / 2.6 - 1.4, u.t + 0.4]
 
 // 1. Capture: the recode on screen, then the apprentice's question and Sabine's answer.
 const recode = markAt('recode')
 add(recode - 1.5, recode + 4.5, 'expert recodes to capex')
 const q = next('agent', recode)
 const ans = q && next('user', q.t)
-if (q && ans) add(q.t - 0.4, ans.t + 0.6, 'apprentice asks why; expert answers')
+if (q && ans) {
+  add(...agentSpan(q), 'apprentice asks why')
+  add(...userSpan(ans), 'expert answers')
+}
 
 // 2. Debrief: end of the teach-back and Sabine's confirmation.
 const confirm = next('user', markAt('recode'), u => /how it works/i.test(u.text))
 if (confirm) {
   const restate = prev('agent', confirm.t)
-  add(Math.max(restate ? restate.t - 0.3 : confirm.t - 7, confirm.t - 8), confirm.t + 1, 'teach-back confirmed')
+  add(Math.max(restate ? restate.t - 0.3 : confirm.t - 6, confirm.t - 6.5), confirm.t + 1, 'teach-back confirmed')
 }
 
 // 3. The Work Map.
 const wm = markAt('workmap')
-add(wm + 0.3, wm + 8, 'work map')
+add(wm + 0.3, wm + 7, 'work map')
 
 // 4. Teach: wrong approval → veto → tutor asks why → new hire answers → tutor explains.
 const wrong = markAt('wrong-approve')
+add(wrong - 1.5, wrong + 3, 'new hire approves on opex; save held')
 const tq = next('agent', wrong)
 const la = tq && next('user', tq.t)
-add(wrong - 1.5, la ? la.t + 0.6 : wrong + 12, 'tutor blocks the save and asks why')
+if (tq) add(...agentSpan(tq), 'tutor: Sabine would stop here')
+if (la) add(...userSpan(la), 'new hire guesses')
 const explain = la && next('agent', la.t)
 if (explain) {
   const after = next('user', explain.t)
@@ -54,12 +67,12 @@ if (explain) {
 
 // 5. Fix and approve, then the mastery screen.
 const fix = markAt('fix')
-add(fix - 0.3, fix + 9, 'new hire fixes and approves')
+add(fix - 0.3, fix + 7.5, 'new hire fixes and approves')
 const mastery = markAt('mastery')
 add(mastery + 0.3, mastery + 4.5, 'mastery')
 
 const total = segments.reduce((s, [a, b]) => s + (b - a), 0)
-const speed = Math.min(1.2, Math.max(1, total / target))
+const speed = Math.min(1.15, Math.max(1, total / target))
 console.log(segments.map(([a, b, l]) => `${a.toFixed(1)}–${b.toFixed(1)}s  ${l}`).join('\n'))
 console.log(`raw ${total.toFixed(1)}s, speed ×${speed.toFixed(2)} → ~${(total / speed).toFixed(0)}s`)
 

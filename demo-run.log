@@ -1,43 +1,95 @@
-[   2.6s] --- capture ---
-[   8.4s] connected conv_1401m42jd5yjf91as9w4g3kqggnm
-[   8.6s] AI  : Hi Sabine, I'll watch quietly and ask a few questions when you pause. Go ahead whenever you're ready.
-[   8.6s] SABINE says: Right, three invoices left before close. Kessler first.
-[  14.5s] USER: Close. Kessler first.
-[  18.2s] mark: recode
-[  35.9s] AI  : What threshold makes invoice four four seven one Capex instead of Opex?
-[  43.4s] SABINE says: Anything over five thousand euros is capex, and this one's six thousand eight fifty.
-[  50.5s] USER: Anything over 5,000 euros is Capex, and this one's 6,850.
-[  51.1s] AI  : Got it, thanks.
-[  66.7s] SABINE says: Brandt again. December, of course.
-[  73.1s] USER: Brandt again. December, of course.
-[  73.1s] AI  : What would make you stop and ask someone before approving a Capex invoice?
-[  83.2s] AI  : Why did you put Brandt's invoice four four seven two on hold?
-[  89.8s] SABINE says: Brandt doubles up every December, so it waits for the controller to match the delivery note.
-[  97.5s] USER: Brandt doubles up every December, so it waits for the controller to match the delivery note.
-[ 107.6s] AI  : Why did Strojírny Plzeň's invoice four four seven three need a second approval?
-[ 115.0s] SABINE says: Anything from Plzeň needs the finance lead's second approval, whatever the amount.
-[ 122.1s] USER: Anything from Plzeň needs the finance lead's second approval, whatever the amount.
-[ 122.6s] SABINE says: That's the three. Done for today.
-[ 122.9s] AI  : Understood, supplier-based rule.
-[ 127.3s] USER: That's the three. Done for today.
-[ 127.3s] AI  : Thanks, Sabine. That was helpful.
-[ 129.7s] --- debrief ---
-[ 147.0s] connected conv_6801m42jhdaaf2g9q8qdrgw0bnm3
-[ 147.0s] AI  : Thanks, Sabine. I have 5 questions about things I couldn't see, then I'll explain it back to you.
-[ 162.1s] AI  : Sabine, are you still there? Here's my first question. When you're about to approve a Capex invoice, what would make you stop and ask someone first?
-[ 173.9s] SABINE says: Ja, still here. If there's no asset number, I stop and ask the controller.
-[ 182.4s] USER: Yeah, still here. If there's no asset number, I stop and ask the controller.
-[ 397.7s] timeout waiting for work map
-[ 397.7s] mark: workmap
-[ 400.7s] --- teach ---
-[ 404.4s] connected conv_7201m42js8jge72abdawe2g30n6x
-[ 405.9s] AI  : Hi! I'll coach you through this the way Sabine does it. Open the first invoice whenever you're ready.
-[ 413.6s] LENA says: The last AI turn was "Hi! I'll coach you through this the way Sabine does it. Open the first invoice whenever you're ready." I'm Lena, and I've opened INV-5120, so I should respond.
-
-Opened it: Kessler, €7,200 hydraulic press, still on cost center 4711.
-page.evaluate: Target page, context or browser has been closed
-    at speak (/Users/YuYuHlaing/hacknation-proj/demo/run-demo.mjs:65:14)
-    at async converse (/Users/YuYuHlaing/hacknation-proj/demo/run-demo.mjs:81:20)
-    at async main (/Users/YuYuHlaing/hacknation-proj/demo/run-demo.mjs:235:3) {
-  log: []
-}
+[   1.6s] --- capture ---
+[   6.0s] connected conv_9001m42jszxpfr4snap21efdsz50
+[   6.0s] AI  : Hi Sabine, I'll watch quietly and ask a few questions when you pause. Go ahead whenever you're ready.
+[  13.3s] SABINE says: Right, three invoices left before close. Kessler first.
+[  19.0s] USER: Right, three invoices left before close. Kessler first.
+[  22.8s] mark: recode
+[  38.6s] AI  : On INV-4471, what threshold or rule made you move the cost center from Opex to Capex?
+[  48.7s] SABINE says: Anything over five thousand euros is equipment, so it goes to capex, 0400.
+[  56.7s] USER: Anything over 5,000 euros is equipment, so it goes to Capex 0400.
+[  61.8s] SABINE says: Brandt again. December, of course.
+[  68.8s] USER: Brandt again. December, of course.
+[  68.9s] AI  : Would you ever approve a Capex invoice like INV-4471 without an asset number?
+[  80.9s] AI  : Why did you put INV-4472 on hold, and what releases it?
+[  88.4s] SABINE says: Brandt double-bills every December, so it waits until the controller matches the delivery note.
+[  96.8s] USER: Brandt double-bills every December, so it waits until the controller matches the delivery note.
+[  97.5s] AI  : Understood, thanks.
+[ 107.4s] AI  : Why did you escalate INV-4473 for second approval at only two thousand euros?
+[ 116.0s] SABINE says: Anything from Plzeň gets a second approval, whatever the amount.
+[ 122.1s] USER: Anything from Plouzané gets a second approval, whatever the amount.
+[ 122.9s] AI  : Noted, thank you.
+[ 127.2s] SABINE says: Small correction, that's Plzeň, not Plouzané. The Czech subsidiary needs the finance lead's second approval.
+[ 137.1s] USER: Small correction, that's Plesn, not Plzen. The Czech subsidiary needs the finance lead's second approval.
+[ 137.1s] AI  : Thanks, noted the correction.
+[ 140.1s] SABINE says: That's the three. Done for today.
+[ 144.3s] USER: That's the three. Done for today.
+[ 146.8s] --- debrief ---
+[ 168.8s] connected conv_6701m42jyz02erkbpzafw7dsd332
+[ 168.8s] AI  : Thanks, Sabine. I have 5 questions about things I couldn't see, then I'll explain it back to you.
+[ 184.2s] AI  : [friendly] Sabine, are you still there? Let me start with the first one. Would you ever approve a Capex invoice without an asset number? And where does a number like A, two two nine one, come from, and what happens if there isn't one yet?
+[ 200.1s] SABINE says: No, never. No asset number, no Capex booking, I stop and ask the controller.
+[ 209.9s] USER: No, never. No asset number, no Capex booking. I stop and ask the controller.
+[ 209.9s] AI  : [curious] Got it, no asset number means no Capex booking. Just one quick follow-up: where does the number normally come from, does the controller create it in the asset register?
+[ 222.9s] SABINE says: I don't create the numbers myself; the controller is who I ask.
+[ 229.2s] USER: I don't create the numbers myself. The controller is who I ask.
+[ 230.2s] AI  : Thanks, that's clear. Next question: does the over five thousand euro Capex rule apply to every supplier, or only to equipment vendors like Kessler? What would you do with a large office supplies or services invoice?
+[ 246.8s] SABINE says: The rule is about equipment over five thousand, so office supplies or services are a different matter.
+[ 255.8s] USER: The rule is about equipment over five thousand, so office supplies or services are a different matter.
+[ 255.9s] AI  : [curious] So the rule is about equipment specifically. What would you actually do with, say, a seven thousand euro services invoice? Would it stay in Opex, or would you check with someone first?
+[ 269.9s] SABINE says: Rule one only covers equipment, so a services invoice isn't capex by that rule.
+[ 277.2s] USER: Rule one only covers equipment, so a services invoice isn't Capex by that rule.
+[ 278.3s] AI  : Okay, so the Capex rule is for equipment, not for services. Next: besides the cost center and asset number, what else did you check before approving the Kessler invoice? Is there anything that would make you hold an equipment invoice?
+[ 295.7s] SABINE says: Beyond the cost center and asset number, I check nothing else from my rules, except a missing asset number stops me.
+[ 305.3s] USER: Beyond the cost center and asset number, I check nothing else for my rules, except a missing asset number stops me.
+[ 306.4s] AI  : Understood, the missing asset number is the one thing that stops you. Next: is the December hold only for Brandt, or for any supplier with a double-billing history? And once the controller has matched the delivery note, who releases the hold?
+[ 323.8s] SABINE says: Only Brandt, and only their December invoices. The controller releases the hold, nobody else.
+[ 332.4s] USER: Only Brandt, and only their December invoices. The controller releases the hold, nobody else.
+[ 333.4s] AI  : Clear, only Brandt in December, and only the controller releases it. Last question: does the second approval rule cover only the Czech subsidiary, or all foreign subsidiaries? And who stands in if the finance lead is unavailable before close?
+[ 351.5s] SABINE says: Only Plzeň, that's my rule. Who stands in, I don't know, ask the controller.
+[ 359.1s] USER: Only Plzeň. That's my rule. Who stands in? I don't know. Ask the controller.
+[ 362.1s] AI  : Thanks, Sabine. Here's how I understand it. At month-end there are three invoices left before close, and you start with Kessler, INV four four seven one, for six thousand eight hundred fifty euros. Because it's equipment over five thousand euros, you recode it from Opex four seven one one to Capex zero four zero zero. You then enter asset number A two two nine one and approve it. You never approve Capex without an asset number. If one is missing, you stop and ask the controller, because you don't create those numbers yourself. The five thousand euro rule covers equipment only, not services or office supplies. Next, the Brandt invoice for three hundred twelve euros forty goes on hold. Brandt December invoices wait until the controller matches the delivery note, and only the controller releases the hold. Finally, the Strojírny Plzeň invoice for two thousand one hundred forty euros goes to the finance lead for second approval, even though the amount is low. That rule covers only Plzeň, and the controller knows who stands in if the finance lead is away. Is that how it works?
+[ 432.7s] SABINE says: Almost, but the asset number must be in place before I approve, not afterwards.
+[ 440.8s] USER: Almost, but the asset number must be in place before I approve, not afterwards.
+[ 440.9s] AI  : Thanks for catching that. The corrected part is that the asset number has to be in place before you approve the Kessler invoice, not added afterwards. If it's missing, you stop and ask the controller first. Is that how it works?
+[ 456.5s] SABINE says: Yes, that's how it works.
+[ 459.9s] USER: Yes, that's how it works.
+[ 460.8s] AI  : Thank you, Sabine, this was really clear, and I appreciate you taking the time to walk me through it.
+[ 485.7s] mark: workmap
+[ 497.6s] --- teach ---
+[ 501.1s] connected conv_4001m42k93gme6baqybs2ht7khae
+[ 502.4s] AI  : Hi! I'll coach you through this the way Sabine does it. Open the first invoice whenever you're ready.
+[ 518.9s] AI  : You've opened the Kessler invoice for seven thousand two hundred euros. [slow] What would you do with the cost center here?
+[ 527.0s] LENA says: I'd leave it at 4711 and just approve it.
+[ 532.9s] USER: I'd leave it at 4711 and just approve it.
+[ 532.9s] new hire approves on opex 4711 (expected veto)
+[ 532.9s] mark: wrong-approve
+[ 534.9s] AI  : Sabine would stop here. Why do you think?
+[ 539.7s] LENA says: Because it's a big amount? Or maybe the cost center is wrong?
+[ 545.7s] USER: Because it's a big amount, or maybe the cost center is wrong?
+[ 548.1s] AI  : You're close. Sabine says, [slow] "Anything over five thousand euros is equipment, so it goes to Capex zero four zero zero." Recode it, then save again.
+[ 559.5s] LENA says: Okay, so over five thousand means equipment, Capex 0400. I'll recode it now.
+[ 567.1s] USER: Okay, so over five thousand means equipment, Capex zero four hundred. I'll recode it now.
+[ 568.8s] AI  : Exactly. Go ahead and recode it, then save. Watch what the invoice needs next once it's Capex.
+[ 575.9s] LENA says: Recoded to Capex 0400, but save is blocked, so is it missing an asset number?
+[ 585.0s] USER: Recoded to Capex, 0400, but save is blocked. So is it missing an asset number?
+[ 585.1s] mark: fix
+[ 586.9s] AI  : [happy] Yes, exactly. Sabine says, "No asset number, no Capex booking." So what would you do if you don't have one?
+[ 593.3s] LENA says: Okay — capex, 0400, and I've added the asset number.
+[ 600.5s] USER: Okay. CapEx 0400, and I've added the asset number.
+[ 602.2s] AI  : Good. Before you approve, where did that asset number come from? Sabine only uses numbers the controller provides.
+[ 610.4s] LENA says: Um, I got it from the controller, so it should be fine, right?
+[ 617.5s] USER: Um, I got it from the controller, so it should be fine, right?
+[ 617.6s] mark: mastery
+[ 623.4s] recording done; composing video
+[ 671.8s] VIDEO: /Users/YuYuHlaing/hacknation-proj/demo/out/ai-apprentice-demo.mp4
+19.7–25.7s  expert recodes to capex
+36.5–55.7s  apprentice asks why; expert answers
+450.3–459.3s  teach-back confirmed
+484.3–492.0s  work map
+529.8–544.7s  tutor blocks the save and asks why
+546.2–554.5s  tutor explains in Sabine's words
+583.2–592.5s  new hire fixes and approves
+616.3–620.5s  mastery
+raw 78.6s, speed ×1.20 → ~66s
+→ /Users/YuYuHlaing/hacknation-proj/demo/out/ai-apprentice-60s.mp4 (66.3s)
+exit 0
