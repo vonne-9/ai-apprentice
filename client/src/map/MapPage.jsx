@@ -12,6 +12,7 @@ export default function MapPage() {
   const [answered, setAnswered] = useState([])
   const [lines, setLines] = useState([])
   const [error, setError] = useState('')
+  const finishing = useRef(false)
   const st = useRef({ startedAt: 0, lines: [], answered: new Set(), questions: [] })
 
   const agent = useAgent({
@@ -34,7 +35,7 @@ export default function MapPage() {
     try {
       setWm(await api.finalize(sessionId, { debrief: st.current.lines }))
       setPhase('done')
-    } catch (e) { setError(e.message); setPhase('error') }
+    } catch (e) { finishing.current = false; setError(e.message); setPhase('error') }
   }
 
   async function startDebrief() {
@@ -57,7 +58,7 @@ export default function MapPage() {
           confirm_teachback: () => {
             const missing = st.current.questions.map((_, i) => i + 1).filter(i => !st.current.answered.has(i))
             if (missing.length) return `Not done: question(s) ${missing.join(', ')} are still unanswered. Ask them first.`
-            finish()
+            if (!finishing.current) { finishing.current = true; finish() }
             return 'Confirmed. Thank the expert in one sentence.'
           },
         },

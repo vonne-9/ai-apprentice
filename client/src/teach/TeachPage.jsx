@@ -24,7 +24,7 @@ export default function TeachPage() {
     expert: wm?.expert,
     agent,
     onBusMessage: (msg, bus) => {
-      if (msg.type !== 'save_attempt' || !wmRef.current) return
+      if (msg.type !== 'save_attempt' || msg.mode !== 'teach' || !wmRef.current) return
       const w = wmRef.current
       const [g] = checkGuardrails(msg.invoice, msg.action, w.guardrails)
       if (!g) { bus.post({ type: 'save_verdict', id: msg.invoice.id, ok: true }); return }

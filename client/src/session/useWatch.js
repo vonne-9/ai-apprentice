@@ -53,6 +53,7 @@ export function useWatch({ mode, expert, agent, onBusMessage }) {
     const sampler = new ScreenSampler({
       onFrame: async ({ prev, curr }) => {
         const { events: evs } = await api.postFrame(s.id, { t: elapsed(), prev, curr })
+        if (r.current.offSince != null) return // went off the record while the frame was in flight
         for (const e of evs) {
           r.current.recent.push(e)
           r.current.detector.event()

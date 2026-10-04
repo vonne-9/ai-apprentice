@@ -8,14 +8,19 @@ function fieldValue(invoice, action, field) {
   }
 }
 
+const norm = (field, x) => {
+  const t = String(x).trim().toLowerCase()
+  return field === 'cost_center' ? t.padStart(4, '0') : t
+}
+
 export function evalCond(invoice, action, { field, op, value }) {
   const v = fieldValue(invoice, action, field)
   switch (op) {
     case '>': return Number(v) > Number(value)
     case '<': return Number(v) < Number(value)
-    case '==': return String(v) === String(value)
-    case '!=': return String(v) !== String(value)
-    case 'in': return Array.isArray(value) && value.map(String).includes(String(v))
+    case '==': return norm(field, v) === norm(field, value)
+    case '!=': return norm(field, v) !== norm(field, value)
+    case 'in': return Array.isArray(value) && value.map(x => norm(field, x)).includes(norm(field, v))
     case 'empty': return !v
     case 'not_empty': return !!v
     default: return false

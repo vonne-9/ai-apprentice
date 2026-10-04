@@ -14,10 +14,13 @@ export default function ErpApp() {
   const busRef = useRef(null)
   const pendingRef = useRef(null)
 
+  const timerRef = useRef(null)
+
   function commit({ id, action }) {
     dispatch({ type: 'setStatus', id, status: STATUS[action] })
     setNotice({ text: `${id} ${STATUS[action]}`, held: false })
     pendingRef.current = null
+    clearTimeout(timerRef.current)
   }
 
   useEffect(() => {
@@ -25,7 +28,7 @@ export default function ErpApp() {
       const p = pendingRef.current
       if (msg.type !== 'save_verdict' || !p || msg.id !== p.id) return
       if (msg.ok) commit(p)
-      else { setNotice({ text: `Held by tutor: ${msg.reason}`, held: true }); pendingRef.current = null }
+      else { clearTimeout(timerRef.current); setNotice({ text: `Held by tutor: ${msg.reason}`, held: true }); pendingRef.current = null }
     })
     busRef.current = bus
     const ping = () => bus.post({ type: 'activity', t: Date.now() })
@@ -34,6 +37,7 @@ export default function ErpApp() {
     return () => {
       window.removeEventListener('keydown', ping)
       window.removeEventListener('mousedown', ping)
+      clearTimeout(timerRef.current)
       bus.close()
     }
   }, [])
@@ -43,8 +47,17 @@ export default function ErpApp() {
   function attempt(action) {
     if (!inv) return
     pendingRef.current = { id: inv.id, action }
-    busRef.current.post({ type: 'save_attempt', invoice: inv, action })
-    if (teach) setNotice({ text: 'Saving…', held: false })
+    busRef.current.post({ type: 'save_attempt', invoice: inv, action, mode: teach ? 'teach' : 'capture' })
+    if (teach) {
+      setNotice({ text: 'Saving…', held: false })
+      clearTimeout(timerRef.current)
+      const id = inv.id
+      timerRef.current = setTimeout(() => {
+        if (pendingRef.current?.id !== id) return
+        pendingRef.current = null
+        setNotice({ text: 'No tutor connected — open /teach', held: true })
+      }, 3000)
+    }
     else setTimeout(() => commit({ id: inv.id, action }), 300)
   }
 
