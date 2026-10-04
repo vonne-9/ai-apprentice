@@ -25,6 +25,8 @@ export function evalCond(invoice, action, { field, op, value }) {
 export function checkGuardrails(invoice, action, guardrails) {
   return guardrails.filter(g =>
     g.check &&
+    Array.isArray(g.check.when) &&
+    g.check.require && typeof g.check.require === 'object' &&
     g.check.when.every(c => evalCond(invoice, action, c)) &&
     !evalCond(invoice, action, g.check.require))
 }

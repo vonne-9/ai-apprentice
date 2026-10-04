@@ -38,4 +38,10 @@ describe('guardrails', () => {
     expect(evalCond(press, 'approve', { field: 'asset_no', op: 'empty' })).toBe(true)
     expect(evalCond(press, 'approve', { field: 'cost_center', op: '!=', value: '0400' })).toBe(true)
   })
+  it('skips guardrails with malformed checks instead of throwing', () => {
+    const noRequire = { id: 'b1', stepN: 1, rule: 'x', kind: 'limit', check: { when: [{ field: 'amount', op: '>', value: 1 }] } }
+    const noWhen = { id: 'b2', stepN: 1, rule: 'y', kind: 'limit', check: { require: { field: 'asset_no', op: 'not_empty' } } }
+    const badTypes = { id: 'b3', stepN: 1, rule: 'z', kind: 'limit', check: { when: 'amount', require: 'x' } }
+    expect(checkGuardrails(press, 'approve', [noRequire, noWhen, badTypes, capex]).map(g => g.id)).toEqual(['g1'])
+  })
 })
