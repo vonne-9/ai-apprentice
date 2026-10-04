@@ -20,6 +20,11 @@ export default function CapturePage() {
         role: 'interviewer',
         prompt: interviewerPrompt(expert),
         firstMessage: `Hi ${expert}, I'll watch quietly and ask a few questions when you pause. Go ahead whenever you're ready.`,
+        // The interviewer agent also carries the debrief tools; answer them harmlessly during capture.
+        clientTools: {
+          mark_answered: () => 'Not in the debrief yet; keep watching.',
+          confirm_teachback: () => 'Not in the debrief yet; keep watching.',
+        },
       })
     } catch (e) { setError(e.message) }
   }

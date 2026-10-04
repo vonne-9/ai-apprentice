@@ -37,4 +37,11 @@ describe('pauseDetector', () => {
     at(7000); expect(d.tick()).toBe(false)
     at(8000); expect(d.tick()).toBe(true)
   })
+  it('ignores a speaking flag that has been stuck longer than maxSpeakingMs', () => {
+    const { d, at } = setup()
+    at(0); d.event()
+    d.setAgentSpeaking(true)
+    at(19000); expect(d.tick()).toBe(false)
+    at(21000); expect(d.tick()).toBe(true)
+  })
 })

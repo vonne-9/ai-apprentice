@@ -23,6 +23,8 @@ export default function ErpApp() {
     clearTimeout(timerRef.current)
   }
 
+  useEffect(() => { document.title = 'Mock ERP' }, [])
+
   useEffect(() => {
     const bus = openBus(msg => {
       const p = pendingRef.current
