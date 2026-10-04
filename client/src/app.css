@@ -11,3 +11,13 @@ button.danger { color: var(--warn); }
 .badge { display: inline-block; padding: .1rem .5rem; border-radius: 999px; background: #e6efe9; color: var(--accent); font-size: .8rem; }
 .badge.off { background: #f6e3dc; color: var(--warn); }
 .error { color: var(--warn); }
+.workmap { padding: 1.5rem; }
+.timeline { display: flex; gap: .5rem; list-style: none; padding: 0; overflow-x: auto; }
+.timeline li { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: .5rem .75rem; cursor: pointer; white-space: nowrap; }
+.timeline li.active { border-color: var(--accent); background: #e6efe9; }
+.step { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 1.5rem; margin-top: 1rem; }
+.step img { width: 100%; border: 1px solid var(--line); border-radius: 8px; }
+.step dl { display: grid; grid-template-columns: 130px 1fr; gap: .5rem; }
+.step dt { color: var(--muted); }
+.step dd { margin: 0; }
+.step li { margin-bottom: .5rem; }

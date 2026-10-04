@@ -1,7 +1,8 @@
 import ErpApp from './erp/ErpApp.jsx'
 import CapturePage from './capture/CapturePage.jsx'
+import MapPage from './map/MapPage.jsx'
 
-const routes = { '/erp': ErpApp, '/capture': CapturePage }
+const routes = { '/erp': ErpApp, '/capture': CapturePage, '/map': MapPage }
 
 function Home() {
   return (
