@@ -1,0 +1,14 @@
+.erp { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; font-size: 18px; }
+.erp aside { border-right: 1px solid var(--line); background: var(--card); }
+.erp aside h2 { margin: 0; padding: 1rem; font-size: 1.1rem; }
+.erp .row { padding: .75rem 1rem; border-top: 1px solid var(--line); cursor: pointer; }
+.erp .row.sel { background: #e6efe9; }
+.erp .row small { display: block; color: var(--muted); }
+.erp .detail { padding: 1.5rem 2rem; }
+.erp dl { display: grid; grid-template-columns: 180px 1fr; gap: .6rem 1rem; }
+.erp dt { color: var(--muted); }
+.erp dd { margin: 0; font-weight: 600; }
+.erp select, .erp input { font: inherit; padding: .3rem .5rem; }
+.erp .actions { display: flex; gap: .75rem; margin-top: 1.5rem; }
+.erp .notice { margin-top: 1rem; font-weight: 600; }
+.erp .notice.held { color: var(--warn); }
