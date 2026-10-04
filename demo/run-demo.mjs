@@ -185,7 +185,13 @@ async function main() {
   state.status = 'idle'
   await page.waitForURL(/\/map/)
   await page.getByRole('button', { name: 'Start debrief' }).click()
-  await waitFor(() => state.status === 'connected', 90000, 'debrief connection')
+  // Synthesis can fail or time out; the page then offers Retry.
+  await waitFor(async () => {
+    if (state.status === 'connected') return true
+    const retry = page.getByRole('button', { name: 'Retry' })
+    if (await retry.count()) { log('synthesis failed; clicking Retry'); await retry.click() }
+    return false
+  }, 180000, 'debrief connection')
   let teachbacks = 0
   await converse(page, {
     ...sabine,

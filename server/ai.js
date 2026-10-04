@@ -30,11 +30,11 @@ export function createAi(client) {
     },
     synthesize({ events, transcript }) {
       const text = `EVENTS:\n${JSON.stringify(events.map(({ frame, ...e }) => e))}\n\nTRANSCRIPT:\n${transcript.map(u => `[t=${u.t.toFixed(1)}] ${u.speaker}: ${u.text}`).join('\n')}`
-      return askJson({ model: SYNTH_MODEL, system: SYNTH_SYSTEM, content: [{ type: 'text', text }], maxTokens: 4000 })
+      return askJson({ model: SYNTH_MODEL, system: SYNTH_SYSTEM, content: [{ type: 'text', text }], maxTokens: 8000, extra: { output_config: { effort: 'medium' } } })
     },
     finalize({ draft, debrief }) {
       const text = `DRAFT:\n${JSON.stringify(draft)}\n\nDEBRIEF:\n${debrief.map(u => `[t=${u.t.toFixed(1)}] ${u.speaker}: ${u.text}`).join('\n')}`
-      return askJson({ model: SYNTH_MODEL, system: FINALIZE_SYSTEM, content: [{ type: 'text', text }], maxTokens: 6000 })
+      return askJson({ model: SYNTH_MODEL, system: FINALIZE_SYSTEM, content: [{ type: 'text', text }], maxTokens: 10000, extra: { output_config: { effort: 'medium' } } })
     },
   }
 }
