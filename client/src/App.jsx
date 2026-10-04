@@ -1,6 +1,7 @@
 import ErpApp from './erp/ErpApp.jsx'
+import CapturePage from './capture/CapturePage.jsx'
 
-const routes = { '/erp': ErpApp }
+const routes = { '/erp': ErpApp, '/capture': CapturePage }
 
 function Home() {
   return (
