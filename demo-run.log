@@ -1,0 +1,43 @@
+[   2.6s] --- capture ---
+[   8.4s] connected conv_1401m42jd5yjf91as9w4g3kqggnm
+[   8.6s] AI  : Hi Sabine, I'll watch quietly and ask a few questions when you pause. Go ahead whenever you're ready.
+[   8.6s] SABINE says: Right, three invoices left before close. Kessler first.
+[  14.5s] USER: Close. Kessler first.
+[  18.2s] mark: recode
+[  35.9s] AI  : What threshold makes invoice four four seven one Capex instead of Opex?
+[  43.4s] SABINE says: Anything over five thousand euros is capex, and this one's six thousand eight fifty.
+[  50.5s] USER: Anything over 5,000 euros is Capex, and this one's 6,850.
+[  51.1s] AI  : Got it, thanks.
+[  66.7s] SABINE says: Brandt again. December, of course.
+[  73.1s] USER: Brandt again. December, of course.
+[  73.1s] AI  : What would make you stop and ask someone before approving a Capex invoice?
+[  83.2s] AI  : Why did you put Brandt's invoice four four seven two on hold?
+[  89.8s] SABINE says: Brandt doubles up every December, so it waits for the controller to match the delivery note.
+[  97.5s] USER: Brandt doubles up every December, so it waits for the controller to match the delivery note.
+[ 107.6s] AI  : Why did Strojírny Plzeň's invoice four four seven three need a second approval?
+[ 115.0s] SABINE says: Anything from Plzeň needs the finance lead's second approval, whatever the amount.
+[ 122.1s] USER: Anything from Plzeň needs the finance lead's second approval, whatever the amount.
+[ 122.6s] SABINE says: That's the three. Done for today.
+[ 122.9s] AI  : Understood, supplier-based rule.
+[ 127.3s] USER: That's the three. Done for today.
+[ 127.3s] AI  : Thanks, Sabine. That was helpful.
+[ 129.7s] --- debrief ---
+[ 147.0s] connected conv_6801m42jhdaaf2g9q8qdrgw0bnm3
+[ 147.0s] AI  : Thanks, Sabine. I have 5 questions about things I couldn't see, then I'll explain it back to you.
+[ 162.1s] AI  : Sabine, are you still there? Here's my first question. When you're about to approve a Capex invoice, what would make you stop and ask someone first?
+[ 173.9s] SABINE says: Ja, still here. If there's no asset number, I stop and ask the controller.
+[ 182.4s] USER: Yeah, still here. If there's no asset number, I stop and ask the controller.
+[ 397.7s] timeout waiting for work map
+[ 397.7s] mark: workmap
+[ 400.7s] --- teach ---
+[ 404.4s] connected conv_7201m42js8jge72abdawe2g30n6x
+[ 405.9s] AI  : Hi! I'll coach you through this the way Sabine does it. Open the first invoice whenever you're ready.
+[ 413.6s] LENA says: The last AI turn was "Hi! I'll coach you through this the way Sabine does it. Open the first invoice whenever you're ready." I'm Lena, and I've opened INV-5120, so I should respond.
+
+Opened it: Kessler, €7,200 hydraulic press, still on cost center 4711.
+page.evaluate: Target page, context or browser has been closed
+    at speak (/Users/YuYuHlaing/hacknation-proj/demo/run-demo.mjs:65:14)
+    at async converse (/Users/YuYuHlaing/hacknation-proj/demo/run-demo.mjs:81:20)
+    at async main (/Users/YuYuHlaing/hacknation-proj/demo/run-demo.mjs:235:3) {
+  log: []
+}

@@ -34,7 +34,8 @@ export async function personaReply({ persona, selfLabel, transcript, situation }
       role: 'user',
       content: `Situation: ${situation}\n\nConversation so far:\n${render(transcript, selfLabel)}\n\n` +
         'The AI just finished its turn. If it asked you something or is waiting for you, reply with exactly what you say out loud next. ' +
-        'If it only acknowledged or said something that needs no answer, reply with exactly SILENT. Output only the spoken words or SILENT.',
+        'If it only acknowledged or said something that needs no answer, reply with exactly SILENT. Output only the spoken words or SILENT.' +
+        (process.env.DEMO_BRIEF ? ' Keep it to ONE short sentence, under 15 words.' : ''),
     }],
   })
   const text = res.content.filter(b => b.type === 'text').map(b => b.text).join('').trim().replace(/^"|"$/g, '')

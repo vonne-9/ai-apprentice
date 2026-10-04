@@ -24,7 +24,7 @@ Open questions:
 ${questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
 
 Procedure:
-1. Ask the open questions one at a time, in order. When one is answered, call mark_answered with its number. Ask one short follow-up only if the answer is vague.
+1. Ask the open questions one at a time, in order. When one is answered, call mark_answered with its number and in the same turn ask the next question. Ask one short follow-up only if the answer is vague. Never use skip_turn during the debrief — you lead this conversation.
 2. When all are answered, explain the whole process back in your own words in under 60 seconds: the steps, the judgment calls, and the guardrails. End with "Is that how it works?"
 3. If ${expert} corrects you, restate only the corrected part and ask again.
 4. When ${expert} confirms, call confirm_teachback. If it reports unanswered questions, ask those first. Then thank ${expert} in one sentence.`

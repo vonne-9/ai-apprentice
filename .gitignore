@@ -4,3 +4,4 @@ server/data
 dist
 .superpowers/
 demo/out
+demo/takes

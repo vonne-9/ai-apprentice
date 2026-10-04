@@ -18,6 +18,9 @@ const CHROME = process.env.CHROME_PATH ||
   `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1223/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
+// Named moments in the run, used by demo/highlight.mjs to cut the short version.
+const marks = []
+const mark = name => { marks.push({ name, at: Date.now() }); log(`mark: ${name}`) }
 const t0 = Date.now()
 const stamp = () => ((Date.now() - t0) / 1000).toFixed(1).padStart(6)
 const log = (...a) => console.log(`[${stamp()}s]`, ...a)
@@ -155,6 +158,7 @@ async function main() {
   await speak(page, 'sabine', 'Right, three invoices left before close. Kessler first.')
   await erp.getByText('INV-4471').first().click()
   await sleep(3500)
+  mark('recode')
   await erp.locator('select').selectOption('0400')
   await sleep(1500)
   await erp.getByPlaceholder('—').fill('A-2291')
@@ -193,6 +197,14 @@ async function main() {
     return false
   }, 180000, 'debrief connection')
   let teachbacks = 0
+  // If the agent goes quiet mid-debrief (e.g. skipped its turn), Sabine nudges it on.
+  const nudge = setInterval(async () => {
+    const last = state.transcript[state.transcript.length - 1]
+    if (state.status === 'connected' && agentQuiet() && last && last.speaker === 'user' && Date.now() - last.at > 12000) {
+      last.at = Date.now()
+      await speak(page, 'sabine', "Go on, what's next?").catch(() => {})
+    }
+  }, 2000)
   await converse(page, {
     ...sabine,
     maxTurns: 14,
@@ -210,6 +222,8 @@ async function main() {
     },
   })
   await waitFor(async () => (await page.locator('.workmap').count()) > 0, 180000, 'work map')
+  clearInterval(nudge)
+  mark('workmap')
   await sleep(3000)
   for (const li of (await page.locator('.timeline li').all()).slice(0, 4)) { await li.click(); await sleep(2200) }
 
@@ -230,6 +244,7 @@ async function main() {
   await converse(page, { ...lena, situation: 'You just opened INV-5120 (Kessler, €7,200 hydraulic press, cost center still 4711). You are looking at it.', maxTurns: 1, idleMs: 14000 })
 
   log('new hire approves on opex 4711 (expected veto)')
+  mark('wrong-approve')
   await erp.getByRole('button', { name: 'Approve' }).click()
   await waitFor(async () => (await erp.getByText(/Held by tutor/).count()) > 0, 8000, 'veto')
   await converse(page, {
@@ -237,6 +252,7 @@ async function main() {
     situation: 'You tried to approve INV-5120 on cost center 4711 and the tutor blocked the save. Answer the tutor.',
   })
 
+  mark('fix')
   await erp.locator('select').selectOption('0400')
   await sleep(1500)
   await erp.getByPlaceholder('—').fill('A-3310')
@@ -246,6 +262,7 @@ async function main() {
   await converse(page, { ...lena, maxTurns: 1, idleMs: 12000, situation: 'You fixed the invoice and it was approved. Respond briefly if the tutor says something.' })
 
   await page.getByRole('button', { name: 'Finish session' }).click()
+  mark('mastery')
   stopPump()
   await sleep(5000)
   timeline.erps[1].end = Date.now()
@@ -265,6 +282,7 @@ async function main() {
     erps: await Promise.all(erpVideos.map(async e => ({ path: await e.video.path(), start: e.start, end: e.end }))),
     conversations: state.conversations,
     transcript: state.transcript,
+    marks,
   }
   await fs.writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2))
   log('recording done; composing video')
